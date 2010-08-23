@@ -11,4 +11,6 @@ tags = "расходники, сервис, штрафы, шиномонтаж, 
 
 esource.configure(login: ARGV[0], password: ARGV[1], tags_to_import: tags)
 
-esource.fetch(esource.password)
+result = esource.fetch(esource.password)
+
+puts result

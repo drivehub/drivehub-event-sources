@@ -48,12 +48,13 @@ class MoneyTrackin < EventSourcePublic
     content = res.content
     doc = REXML::Document.new(content)
 
-    return if doc.root.attributes['code'] != 'done'
+    return "failure" if doc.root.attributes['code'] != 'done'
 
     tags = self.tags_to_import.split(/\s*[\,\;]\s*/) if self.tags_to_import
 
     tags = ['auto', 'fuel'] if tags.nil? or tags.empty?
 
+    result = 0
     doc.root.elements.each {|el|
       item = {}
       item[:comment] = el.elements['description'].text
@@ -63,8 +64,9 @@ class MoneyTrackin < EventSourcePublic
 
       next unless item[:tags].detect{|t|  tags.detect{|tt| UnicodeUtils.downcase(tt) == UnicodeUtils.downcase(t) } }
 
-      result = add_event(item)
+      result += 1 if add_event(item)
     }
+    "imported #{result} events"
   end
 
 end
